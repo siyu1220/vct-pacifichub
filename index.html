@@ -400,3 +400,162 @@
   if (typeof renderFA === "function") renderFA();
   renderHighlights();
 </script>
+const hubExtraData = {
+  teams: {
+    "Gen.G": {
+      founded: "2017년",
+      results: ["VCT Pacific 2024 Kickoff 우승", "VCT Masters Shanghai 2024 우승"],
+      career: "한국 기반 e스포츠 구단으로 발로란트 퍼시픽 최상위권 성적을 기록 중입니다."
+    },
+    "T1": {
+      founded: "2004년 (발로란트 팀 2020년 창단)",
+      results: ["VCT Pacific 국제대회 진출 다수", "퍼시픽 상위권 경쟁 유지"],
+      career: "글로벌 멀티 e스포츠 명문 구단으로 로스터 개편과 국제전 도전을 이어가고 있습니다."
+    },
+    "Paper Rex": {
+      founded: "2020년",
+      results: ["VCT Pacific 2023 우승", "VCT Masters Copenhagen 준우승", "Champions LA 준우승"],
+      career: "공격적인 템포와 개성 있는 조합으로 유명한 싱가포르 기반 퍼시픽 대표 팀입니다."
+    },
+    "RRQ": {
+      founded: "2013년",
+      results: ["VCT Pacific 스테이지 진출 및 상위권 도약"],
+      career: "동남아시아 대표 구단 중 하나로 2027 시즌을 대비한 로스터 재편을 진행 중입니다."
+    },
+    "ZETA DIVISION": {
+      founded: "2018년",
+      results: ["VCT Masters Reykjavik 3위", "일본 국내 및 퍼시픽 주요 대회 출전"],
+      career: "일본 발로란트 씬을 대표하는 구단으로 팬덤과 국제 무대 경험을 갖추고 있습니다."
+    },
+    "FULL SENSE": {
+      founded: "2020년",
+      results: ["태국 및 APAC 지역 주요 대회 우승·상위권"],
+      career: "태국 기반 팀으로 퍼시픽 무대 경쟁력을 강화하고 있습니다."
+    },
+    "Crazy Raccoon": {
+      founded: "2018년",
+      results: ["일본 발로란트 초기 국제대회 진출"],
+      career: "일본 인기 e스포츠 조직으로 로스터 및 커뮤니티 활동이 활발합니다."
+    },
+    "GAM Esports": {
+      founded: "2011년",
+      results: ["지역 리그 다수 우승 및 국제무대 경험"],
+      career: "베트남 대표 e스포츠 구단으로 로스터 확장 및 신예 발굴에 나섭니다."
+    },
+    "농심": {
+      founded: "2023년",
+      results: ["국내외 챌린저스 및 퍼시픽 무대 도전"],
+      career: "농심 레드포스 기반 발로란트 팀으로 유망주 육성과 로스터 빌딩을 이어가고 있습니다."
+    }
+  },
+  players: {
+    "FA": [
+      {
+        name: "FA 선수 예시",
+        status: "FA",
+        career: "이전 VCT 퍼시픽/챌린저스 활동 이력 보유",
+        note: "현재 자유계약(FA) 신분으로 새 팀 탐색 중"
+      }
+    ],
+    "Rumored": [
+      {
+        name: "영입보도 선수 예시",
+        status: "영입 보도",
+        career: "전 소속팀 주요 대회 출전 및 로스터 등록 이력",
+        note: "2027 시즌 특정 팀 이적·영입 루머/보도 상태"
+      }
+    ]
+  }
+};
+
+function renderTeamCareerModal(teamName) {
+  const info = hubExtraData.teams[teamName] || {
+    founded: "정보 업데이트 예정",
+    results: ["주요 성적 데이터 동기화 대기 중"],
+    career: `${teamName} 팀 커리어 및 구단 히스토리 정보입니다.`
+  };
+
+  let box = document.getElementById("team-career-panel");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "team-career-panel";
+    box.className = "fixed bottom-4 right-4 z-50 max-w-md w-full bg-slate-900 text-white border border-slate-700 rounded-xl p-4 shadow-2xl";
+    document.body.appendChild(box);
+  }
+
+  box.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-bold text-base">${teamName} 팀 커리어</h3>
+      <button onclick="document.getElementById('team-career-panel').remove()" class="text-xs px-2 py-1 bg-slate-800 rounded">닫기</button>
+    </div>
+    <p class="text-xs text-slate-300 mb-2">창단: <strong>${info.founded}</strong></p>
+    <div class="text-xs text-slate-200 mb-2">주요 성적: ${info.results.join(", ")}</div>
+    <p class="text-xs text-slate-400">${info.career}</p>
+  `;
+}
+
+function renderFaAndRumoredPlayers() {
+  const target =
+    document.getElementById("fa-list") ||
+    document.getElementById("fa-container") ||
+    document.getElementById("transfers-list");
+  if (!target) return;
+
+  const allExtraPlayers = [...hubExtraData.players.FA, ...hubExtraData.players.Rumored];
+  const extraHtml = allExtraPlayers.map((p) => `
+    <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/70 text-white mb-2">
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-sm">${p.name}</span>
+        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">${p.status}</span>
+      </div>
+      <p class="text-xs text-slate-300 mt-1">커리어: ${p.career}</p>
+      <p class="text-xs text-slate-400 mt-0.5">현황: ${p.note}</p>
+    </div>
+  `).join("");
+
+  target.insertAdjacentHTML("beforeend", extraHtml);
+}
+
+async function autoUpdateHubWithAI() {
+  const saved = localStorage.getItem("vct_pacific_2027_ai_patch");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.teams) Object.assign(hubExtraData.teams, parsed.teams);
+      if (parsed.players && parsed.players.FA) hubExtraData.players.FA = parsed.players.FA;
+      if (parsed.players && parsed.players.Rumored) hubExtraData.players.Rumored = parsed.players.Rumored;
+    } catch (e) {}
+  }
+
+  const endpoint = window.VCT_AI_UPDATE_ENDPOINT;
+  if (endpoint) {
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ league: "VCT Pacific 2027" })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.teams) Object.assign(hubExtraData.teams, data.teams);
+        if (data.players && data.players.FA) hubExtraData.players.FA = data.players.FA;
+        if (data.players && data.players.Rumored) hubExtraData.players.Rumored = data.players.Rumored;
+        localStorage.setItem("vct_pacific_2027_ai_patch", JSON.stringify(data));
+      }
+    } catch (e) {}
+  }
+
+  if (typeof renderTeams === "function") renderTeams();
+  if (typeof renderFA === "function") renderFA();
+  renderFaAndRumoredPlayers();
+}
+
+document.addEventListener("click", (e) => {
+  const card = e.target.closest("[data-team], .team-card");
+  if (!card) return;
+  const teamName = card.getAttribute("data-team") || card.querySelector("h2, h3, .team-name")?.textContent?.trim();
+  if (teamName) renderTeamCareerModal(teamName);
+});
+
+setInterval(autoUpdateHubWithAI, 1000 * 60 * 30);
+autoUpdateHubWithAI();
