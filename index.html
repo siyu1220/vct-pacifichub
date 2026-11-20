@@ -484,3 +484,138 @@
   </script>
 </body>
 </html>
+const vctTodaySyncData = {
+  marketSummary: {
+    official: "13/40",
+    reported: 9,
+    openSlots: 9,
+    movesTracked: 99
+  },
+  teams: {
+    "Paper Rex": {
+      rosterStatus: "3/5 locked",
+      summary: "PRX has completed its 2027 roster with f0rsakeN, invy, something, PatMen and primmie, with alecks as head coach. It let d4v41 and Wendler go and parted ways with Jinggg. Lion Esports reports Riot has naturalized something, so he doesn't take an import slot.",
+      startingFive: [
+        { name: "invy", role: "Starter", status: "official" },
+        { name: "PatMen", role: "Starter", status: "official" },
+        { name: "primmie", role: "Duelist", status: "official" },
+        { name: "something", role: "duelist", status: "expiring" },
+        { name: "f0rsakeN", role: "Starter", status: "expiring" },
+        { name: "alecks", role: "Head coach", status: "expiring" }
+      ],
+      recentMoves: [
+        "Signed PatMen (Global Esports → Paper Rex · Nov 19, official)",
+        "Signed primmie (FULL SENSE → Paper Rex · Nov 19, official)",
+        "Naturalized by Riot: something (Paper Rex · Nov 16, reported)",
+        "Re-signed something ([F/A] → Paper Rex · Nov 13, official)",
+        "Re-signed invy ([F/A] → Paper Rex · Nov 10, official)",
+        "Re-signed f0rsakeN ([F/A] → Paper Rex · Nov 9, official)",
+        "Leaving Paper Rex + set to join All Gamers: Jinggg (Nov 5, reported)",
+        "Leaving Paper Rex + set to join Xi Lai Gaming: d4v41 (Nov 4, reported)"
+      ]
+    },
+    "T1": {
+      rosterStatus: "3/5 locked",
+      summary: "T1 finished 5th–6th at Champions and is rebuilding around iZu, with stax and BuZz re-signed through 2028 and Sungmin back as a coach through 2028. T1 officially announced crashies on Nov 11 and TenZ on Nov 12, completing its five with iZu, stax and BuZz, and officially welcomed Sacy as head coach on Nov 13.",
+      startingFive: [
+        { name: "iZu", role: "Starter", status: "official" },
+        { name: "TenZ", role: "Starter", status: "official" },
+        { name: "crashies", role: "Initiator", status: "official" },
+        { name: "stax", role: "Starter", status: "expiring" },
+        { name: "BuZz", role: "Duelist", status: "expiring" },
+        { name: "Sacy", role: "Head coach", status: "official" }
+      ],
+      recentMoves: [
+        "Named on 2027 roster: iZu ([F/A] → T1 · Nov 13, official)",
+        "Welcomed Sacy as head coach (Nov 13, official)",
+        "Announced TenZ (Nov 12, official)",
+        "Announced crashies (Nov 11, official)",
+        "stax and BuZz re-signed through 2028; Sungmin back as coach through 2028"
+      ]
+    }
+  },
+  transfersAndRumors: [
+    {
+      player: "PatMen",
+      status: "Official · Signed",
+      career: "Global Esports → Paper Rex",
+      detail: "11월 19일 Paper Rex 합류 공식 발표"
+    },
+    {
+      player: "primmie",
+      status: "Official · Signed",
+      career: "FULL SENSE → Paper Rex (Duelist)",
+      detail: "11월 19일 Paper Rex 합류 공식 발표"
+    },
+    {
+      player: "something",
+      status: "Re-signed & Reported Naturalized",
+      career: "Paper Rex (Duelist)",
+      detail: "11월 13일 재계약 공식 발표, 11월 16일 Riot 귀화 처리로 임포트 슬롯 미점유 보도"
+    },
+    {
+      player: "invy / f0rsakeN",
+      status: "Official · Re-signed",
+      career: "Paper Rex",
+      detail: "11월 9일 f0rsakeN, 11월 10일 invy 재계약 공식 발표"
+    },
+    {
+      player: "Jinggg",
+      status: "Left LFT / Reported All Gamers",
+      career: "Paper Rex → All Gamers (보도)",
+      detail: "10월 31일 Paper Rex LFT 선언, 11월 5일 VCT China All Gamers 합류 전망 보도"
+    },
+    {
+      player: "d4v41 / Wendler",
+      status: "Not re-signed / Reported Xi Lai Gaming",
+      career: "Paper Rex (선수 및 AC)",
+      detail: "10월 24일 LFT/미재계약 발표, 11월 4일 d4v41의 Xi Lai Gaming 행 보도"
+    },
+    {
+      player: "TenZ / crashies / Sacy",
+      status: "Official · Joined T1",
+      career: "T1 (선수진 및 Head coach)",
+      detail: "11월 11일 crashies, 11월 12일 TenZ, 11월 13일 Sacy 감독 합류 공식 발표"
+    },
+    {
+      player: "iZu / stax / BuZz / Sungmin",
+      status: "2027–2028 Core",
+      career: "T1",
+      detail: "iZu 중심 리빌딩, stax·BuZz·Sungmin 코치 2028년까지 계약"
+    }
+  ]
+};
+
+function applyVctTodayUpdates() {
+  if (typeof hubData !== "undefined" && Array.isArray(hubData.teams)) {
+    hubData.teams = hubData.teams.map((team) => {
+      const synced = vctTodaySyncData.teams[team.name];
+      if (!synced) return team;
+      return {
+        ...team,
+        roster: synced.startingFive.map((m) => ({
+          name: m.name,
+          role: `${m.role} (${m.status})`,
+          career: synced.recentMoves.join(" | ")
+        })),
+        career: `${synced.summary} (${synced.rosterStatus})`
+      };
+    });
+  }
+
+  if (typeof hubData !== "undefined" && Array.isArray(hubData.faPlayers)) {
+    const mappedTransfers = vctTodaySyncData.transfersAndRumors.map((item) => ({
+      name: item.player,
+      badge: item.status,
+      role: "VCT Pacific 2027 이적 동향",
+      career: item.career,
+      note: item.detail
+    }));
+    hubData.faPlayers = [...mappedTransfers, ...hubData.faPlayers];
+  }
+
+  if (typeof renderTeams === "function") renderTeams();
+  if (typeof renderFA === "function") renderFA();
+}
+
+applyVctTodayUpdates();
