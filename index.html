@@ -1,722 +1,486 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCT Pacific 2027 Hub & STOVE LEAGUE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap');
-        body { font-family: 'Pretendard', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-        .glass { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glow-red { box-shadow: 0 0 25px rgba(239, 68, 68, 0.35); }
-        .modal { transition: opacity 0.25s ease, transform 0.25s ease; }
-        .modal.hidden-modal { opacity: 0; pointer-events: none; transform: scale(0.96); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCT PACIFIC 2027 HUB</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f8fafc;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      backdrop-filter: blur(10px);
+    }
+    .team-card {
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+    .team-card:hover {
+      transform: translateY(-4px);
+      border-color: #ef4444;
+    }
+  </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="glass sticky top-0 z-40 border-b border-gray-800 px-6 py-4 flex flex-wrap gap-4 items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="bg-red-600 text-white font-black px-3 py-1 rounded tracking-wider text-lg">VCT</div>
-            <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent">PACIFIC 2027 HUB</h1>
-        </div>
-        <div class="flex items-center space-x-2 sm:space-x-3">
-            <button onclick="switchTab('teams')" id="btn-teams" class="px-4 py-2 rounded-lg font-semibold bg-red-600 text-white transition text-sm sm:text-base">파트너 팀 로스터</button>
-            <button onclick="switchTab('fa')" id="btn-fa" class="px-4 py-2 rounded-lg font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition text-sm sm:text-base">FA & LFT 시장</button>
-            <button onclick="switchTab('news')" id="btn-news" class="px-4 py-2 rounded-lg font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition text-sm sm:text-base">뉴스 & 하이라이트</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6">
-
-        <!-- TAB 1: Teams -->
-        <section id="tab-teams" class="space-y-6">
-            <div class="flex flex-wrap gap-2 justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fa-solid fa-shield-halved text-red-500"></i> 2027 퍼시픽 파트너 팀 로스터 (11월 18일 기준)</h2>
-                    <p class="text-xs text-gray-400 mt-1">💡 <b>팀 이름</b>을 클릭하면 팀 커리어를, <b>선수 이름</b>을 클릭하면 마우스·감도 스펙을 확인할 수 있습니다.</p>
-                </div>
-                <span class="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full border border-gray-700">총 8개 주요 파트너 팀</span>
-            </div>
-            
-            <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </section>
-
-        <!-- TAB 2: FA & LFT -->
-        <section id="tab-fa" class="hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fa-solid fa-user-clock text-orange-500"></i> FA 및 LFT (Looking For Team) 시장</h2>
-                <span class="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full border border-gray-700">2027 오프시즌 이적 시장</span>
-            </div>
-            <div id="fa-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </section>
-
-        <!-- TAB 3: News & Highlights -->
-        <section id="tab-news" class="hidden space-y-8">
-            <div class="space-y-4">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fa-solid fa-newspaper text-red-500"></i> [주간 발로란트] 오프시즌 핵심 이슈 요약</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass p-5 rounded-xl space-y-2 border-t-4 border-red-500">
-                        <span class="text-xs font-bold text-red-400">이슈 01 · 킥오프 예선 공정성</span>
-                        <h3 class="font-bold text-lg">BONK 핵 적발 및 재경기 형평성 논란</h3>
-                        <p class="text-sm text-gray-300 leading-relaxed">유럽 공개 예선에서 BONK의 부정 프로그램 사용이 적발되어 실격 처리되었으나, 오로라 등 일부 팀에게만 재경기 기회를 부여해 초반 탈락 팀들과의 형평성 논란이 일었습니다.</p>
-                    </div>
-                    <div class="glass p-5 rounded-xl space-y-2 border-t-4 border-orange-500">
-                        <span class="text-xs font-bold text-orange-400">이슈 02 · 퍼시픽 지각변동</span>
-                        <h3 class="font-bold text-lg">T1 슈퍼팀 결성 & PRX 오리지널 해체</h3>
-                        <p class="text-sm text-gray-300 leading-relaxed">T1에 TenZ, crashies, stax가 합류하며 화제를 모았고, PRX는 5년간 함께한 jinggg, d4v41과 결별 후 PatMen 영입이 보도되었습니다.</p>
-                    </div>
-                    <div class="glass p-5 rounded-xl space-y-2 border-t-4 border-blue-500">
-                        <span class="text-xs font-bold text-blue-400">이슈 03 · 글로벌 LFT 대란</span>
-                        <h3 class="font-bold text-lg">구단 철수·미선정 여파로 FA 쏟아져</h3>
-                        <p class="text-sm text-gray-300 leading-relaxed">파트너 미선정 팀(KRX 등) 및 운영 중단을 발표한 EG 등의 여파로 수많은 S급 선수들과 코치진이 대거 LFT를 선언하며 이적 시장에 나왔습니다.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fa-brands fa-youtube text-red-600"></i> 주간 발로란트 하이라이트 & 분석 영상</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass p-4 rounded-xl space-y-3">
-                        <div class="aspect-video w-full bg-gray-900 rounded-lg overflow-hidden">
-                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/xY547or-twE" title="주간 발로란트 1" allowfullscreen></iframe>
-                        </div>
-                        <h3 class="font-bold text-base">누구는 재경기, 누구는 탈락… BONK 핵 사건 & 흩어진 EDG</h3>
-                        <p class="text-xs text-gray-400">Gen.G 담비·마코 합류, 농심 페르시아·하이프 코치 영입 소식 정리</p>
-                    </div>
-                    <div class="glass p-4 rounded-xl space-y-3">
-                        <div class="aspect-video w-full bg-gray-900 rounded-lg overflow-hidden">
-                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/YJqoyGGXoLM" title="주간 발로란트 2" allowfullscreen></iframe>
-                        </div>
-                        <h3 class="font-bold text-base">T1 로스터 실화냐?... 그리고 jinggg까지 떠난 PRX</h3>
-                        <p class="text-xs text-gray-400">TenZ·crashies·Sacy T1 합류 보도 및 글로벌 이적 총정리</p>
-                    </div>
-                    <div class="glass p-4 rounded-xl space-y-3">
-                        <div class="aspect-video w-full bg-gray-900 rounded-lg overflow-hidden">
-                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/oDNvzeUxWD4" title="주간 발로란트 3" allowfullscreen></iframe>
-                        </div>
-                        <h3 class="font-bold text-base">이 선수들이 전부 LFT? 철수 구단들과 복귀하는 선수들</h3>
-                        <p class="text-xs text-gray-400">KRX·EG 대규모 LFT 선언 및 FNS 스트리머 팀 비하인드</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Detail Modal (Player Gear & Team Career) -->
-    <div id="detail-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-modal modal p-4">
-        <div class="glass max-w-md w-full p-6 rounded-2xl glow-red relative space-y-4">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <div id="modal-content" class="space-y-3"></div>
-        </div>
+  <!-- 상단 네비게이션 -->
+  <header class="sticky top-0 z-40 glass border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="bg-red-600 text-white font-black px-2.5 py-1 rounded text-sm tracking-wider">VCT</span>
+        <h1 class="text-lg md:text-xl font-extrabold tracking-tight">PACIFIC 2027 HUB</h1>
+        <span id="ai-sync-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          AI 데이터 동기화 완료
+        </span>
+      </div>
+      <nav class="flex items-center gap-2 text-xs md:text-sm font-semibold">
+        <a href="#teams-section" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition">파트너 팀 로스터</a>
+        <a href="#fa-section" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white transition">FA & LFT 시장</a>
+        <a href="#highlights-section" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition">뉴스 & 하이라이트</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- Floating Reopen Button -->
-    <button onclick="openWelcomeModal()" class="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-3.5 rounded-full shadow-2xl flex items-center gap-2 z-40 transition transform hover:scale-105">
-        <i class="fa-solid fa-rotate-right"></i> 다시 열기
-    </button>
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-12">
 
-    <!-- Welcome Modal -->
-    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 modal p-4">
-        <div class="glass max-w-lg w-full p-8 rounded-2xl glow-red text-center space-y-6">
-            <div class="bg-red-600/20 text-red-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
-            <h2 class="text-2xl font-bold">VCT Pacific 2027 Hub에 오신 것을 환영합니다!</h2>
-            <p class="text-gray-300 text-sm leading-relaxed">
-                11월 18일 기준 최신 로스터와 <b>팀별 주요 커리어</b>, 프로 선수들의 <b>마우스·감도(eDPI) 스펙</b>, 실반 선수를 포함한 <b>FA/LFT 시장</b>과 최신 <b>주간 발로란트</b> 이슈를 한눈에 확인하세요.
-            </p>
-            <button onclick="closeWelcomeModal()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition">
-                허브 입장하기
-            </button>
+    <!-- 1. 파트너 팀 로스터 섹션 -->
+    <section id="teams-section">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+        <div>
+          <h2 class="text-xl md:text-2xl font-bold">🏆 VCT Pacific 2027 참가 팀 로스터</h2>
+          <p class="text-xs text-slate-400 mt-1">팀 카드를 클릭하면 창단 연도, 역대 주요 성적 및 팀 커리어를 확인할 수 있습니다.</p>
         </div>
+        <button onclick="autoUpdateHubWithAI(true)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 transition">
+          🔄 AI 최신 정보 수동 업데이트
+        </button>
+      </div>
+      <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 2. FA & LFT / 영입보도 시장 섹션 -->
+    <section id="fa-section">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+        <div>
+          <h2 class="text-xl md:text-2xl font-bold">🔥 FA 및 LFT (Looking For Team) & 영입보도 시장</h2>
+          <p class="text-xs text-slate-400 mt-1">자유계약(FA), LFT 선언 및 영입 보도된 선수들의 상세 커리어와 현재 이적 동향입니다.</p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">2027 오프시즌 이적 시장</span>
+      </div>
+      <div id="fa-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 3. 뉴스 & 하이라이트 섹션 -->
+    <section id="highlights-section">
+      <div class="mb-5">
+        <h2 class="text-xl md:text-2xl font-bold">🎬 주요 대회 하이라이트 & 뉴스</h2>
+        <p class="text-xs text-slate-400 mt-1">챔피언스 상하이 명장면 15선 및 최신 리그 소식</p>
+      </div>
+      <div id="highlights-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </section>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+    VCT Pacific 2027 Hub © All Rights Reserved.
+  </footer>
+
+  <!-- 팀 커리어 모달 (클릭 시 표시) -->
+  <div id="team-career-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3 mb-4">
+        <div>
+          <span id="modal-team-region" class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-600/20 text-red-400">PACIFIC</span>
+          <h3 id="modal-team-name" class="text-xl font-extrabold mt-1">팀 이름</h3>
+        </div>
+        <button onclick="closeTeamModal()" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">닫기</button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+          <span class="text-xs text-slate-400 block">창단 연도</span>
+          <strong id="modal-team-founded" class="text-slate-100">-</strong>
+        </div>
+        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+          <span class="text-xs text-slate-400 block mb-1">역대 주요 성적</span>
+          <ul id="modal-team-results" class="list-disc list-inside text-xs text-amber-300 space-y-1"></ul>
+        </div>
+        <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+          <span class="text-xs text-slate-400 block mb-1">팀 커리어 & 히스토리</span>
+          <p id="modal-team-career" class="text-xs text-slate-300 leading-relaxed"></p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="glass border-t border-gray-800 text-center py-4 text-sm text-gray-500">
-        VCT Pacific 2027 Hub &copy; All Rights Reserved.
-    </footer>
+  <script>
+    const hubData = {
+      teams: [
+        {
+          name: "Gen.G",
+          region: "KR",
+          founded: "2017년 (발로란트 팀 2020년 창단)",
+          roster: [
+            { name: "t3xture", role: "Duelist", career: "GE → Gen.G / 2024 마스터스 상하이 우승 주역" },
+            { name: "Karon", role: "Controller", career: "Gen.G 데뷔 후 2024 퍼시픽·마스터스 상하이 제패" },
+            { name: "Munchkin", role: "IGL / Flex", career: "C9 KR · CR · T1 · Gen.G / 국제대회 다수 출전 베테랑" },
+            { name: "Meteor", role: "Sentinel", career: "NTH · Gen.G / 마스터스 상하이 MVP급 활약" },
+            { name: "Lakia", role: "Initiator", career: "VS · NUTURN · Dplus · Gen.G / 레이캬비크 3위 및 상하이 우승" }
+          ],
+          results: [
+            "VCT 2024 Masters Shanghai 우승 (퍼시픽 최초 국제대회 우승)",
+            "VCT Pacific 2024 Kickoff & Stage 2 우승",
+            "VCT 2024 Masters Madrid 준우승"
+          ],
+          career: "한국 발로란트와 VCT 퍼시픽을 대표하는 최정상급 구단으로, 2024년 마스터스 상하이 우승을 통해 퍼시픽 리그 첫 국제전 트로피를 들어 올렸습니다."
+        },
+        {
+          name: "T1",
+          region: "KR",
+          founded: "2004년 (발로란트 팀 2020년 창단)",
+          roster: [
+            { name: "BuZz", role: "Duelist", career: "VS · DRX · T1 / 국제대회 다수 진출 핵심 타격대" },
+            { name: "stax", role: "Initiator / IGL", career: "VS · DRX · T1 / 한국 발로란트 대표 베테랑 오더" },
+            { name: "iZu", role: "Flex / Duelist", career: "Jadeite · T1 / 폭발적인 피지컬을 보유한 유망주" },
+            { name: "Meteor", role: "Sentinel", career: "Gen.G · T1 / 국제전 우승 커리어 보유 감시자" },
+            { name: "Sylvan", role: "Controller", career: "World Game Star · Gen.G · T1 / 안정적인 연막 운영" }
+          ],
+          results: [
+            "VCT Masters Bangkok 우승 및 국제대회 다수 본선 진출",
+            "VCT Pacific 상위권 경쟁 지속"
+          ],
+          career: "글로벌 명문 e스포츠 구단으로 북미 무대를 거쳐 퍼시픽 리그에 합류한 뒤 대형 영입과 로스터 리빌딩으로 국제전 정상에 도전하고 있습니다."
+        },
+        {
+          name: "Paper Rex",
+          region: "SG / SEA",
+          founded: "2020년 창단",
+          roster: [
+            { name: "f0rsakeN", role: "Flex", career: "Paper Rex 프랜차이즈 스타 / 전 포지션 소화 가능 에이스" },
+            { name: "Jinggg", role: "Duelist", career: "Paper Rex / 세계 최고 수준의 레이즈·엔트리 플레이어" },
+            { name: "something", role: "Duelist", career: "Sengoku · Paper Rex / 압도적 에임의 핵심 타격대" },
+            { name: "d4v41", role: "Initiator / Sentinel", career: "Paper Rex / 팀의 중심을 잡아주는 베테랑 올라운더" },
+            { name: "mindfreak", role: "Controller", career: "Paper Rex / 원년 멤버이자 클러치 스페셜리스트" }
+          ],
+          results: [
+            "VCT Pacific 2023 초대 우승 & 2024 Stage 1 우승",
+            "VALORANT Champions 2023 LA 준우승",
+            "VCT 2022 Masters Copenhagen 준우승"
+          ],
+          career: "특유의 초공격적 교전 템포('W Gaming')로 전 세계 팬덤을 보유한 싱가포르 기반 퍼시픽 대표 강호입니다."
+        },
+        {
+          name: "RRQ",
+          region: "ID / SEA",
+          founded: "2013년 (발로란트 팀 2020년 창단)",
+          roster: [
+            { name: "Jemkin", role: "Duelist", career: "Scarlet · RRQ / 퍼시픽 최상위권 화력의 타격대" },
+            { name: "xffero", role: "Controller", career: "BOOM · RRQ / 인도네시아 대표 연막 플레이어" },
+            { name: "Estrella", role: "IGL / Initiator", career: "Dplus · RRQ / 한국인 오더로 팀 전술 완성도 향상" },
+            { name: "monyet", role: "Flex / Controller", career: "GE · PRX · RRQ / 마스터스 마드리드 3위 경력" },
+            { name: "Kushy", role: "Initiator", career: "Alter Ego · RRQ / 동남아 챌린저스 출신 유망주" }
+          ],
+          results: [
+            "VCT Pacific 플레이오프 진출 및 스테이지 상위권 도약",
+            "인도네시아 및 동남아 지역 대회 다수 입상"
+          ],
+          career: "인도네시아를 대표하는 명문 구단으로, 다국적 로스터 보강을 통해 퍼시픽 상위권 도약을 이어가고 있습니다."
+        },
+        {
+          name: "ZETA DIVISION",
+          region: "JP",
+          founded: "2018년 (JUPITER로 창단, 2021년 리브랜딩)",
+          roster: [
+            { name: "Dep", role: "Duelist / Flex", career: "REJECT · ZETA / 레이캬비크 3위 주역 및 에이스" },
+            { name: "SugarZ3ro", role: "Controller", career: "NTH · ZETA / 일본 최고 수준의 연막 클러치 플레이어" },
+            { name: "CLZ", role: "IGL / Flex", career: "FENNEL · ZETA / 일본 챌린저스 우승 출신 오더" },
+            { name: "SyouTa", role: "Controller / Duelist", career: "FENNEL · ZETA / 높은 샷 정확도를 갖춘 핵심 전력" },
+            { name: "Xdll", role: "Initiator", career: "SCARZ · ZETA / 젊은 감각의 척후대 플레이어" }
+          ],
+          results: [
+            "VCT 2022 Masters Reykjavik 3위 (일본 팀 역대 최고 성적)",
+            "VCT Pacific 2023 LCQ 우승 및 챔피언스 본선 진출"
+          ],
+          career: "일본 발로란트 씬의 폭발적인 인기를 이끈 대표 구단으로, 국제전 3위 신화를 바탕으로 2027 시즌 재도약을 노립니다."
+        },
+        {
+          name: "FULL SENSE",
+          region: "TH",
+          founded: "2020년 창단",
+          roster: [
+            { name: "PTC", role: "Flex / IGL", career: "FULL SENSE / 챔피언스 본선 경험의 태국 베테랑" },
+            { name: "JohnOlsen", role: "Duelist", career: "FULL SENSE / 폭발적인 오퍼레이터 및 엔트리 플레이어" },
+            { name: "Leviathan", role: "Controller", career: "FULL SENSE / 태국 대표 연막 운영자" },
+            { name: "Potter", role: "Initiator", career: "FULL SENSE / 정교한 스킬 연계 담당" },
+            { name: "Apinya", role: "Sentinel", career: "FULL SENSE / 안정적인 사이트 수비 담당" }
+          ],
+          results: [
+            "VCT 2021 APAC Last Chance Qualifier 우승 및 챔피언스 진출",
+            "태국 챌린저스 및 어센션 퍼시픽 상위권 입상"
+          ],
+          career: "태국 발로란트를 대표하는 구단으로 탄탄한 팀워크와 피지컬을 앞세워 퍼시픽 무대에서 경쟁하고 있습니다."
+        },
+        {
+          name: "Crazy Raccoon",
+          region: "JP",
+          founded: "2018년 창단",
+          roster: [
+            { name: "neth", role: "Flex / Sentinel", career: "BlackBird · CR / 베를린·레이캬비크 마스터스 출전 베테랑" },
+            { name: "Meiy", role: "Duelist", career: "NTH · CR · DFM / 일본 최고 수준의 타격대 커리어" },
+            { name: "popogachi", role: "Initiator", career: "CR / 오랜 기간 팀을 지킨 핵심 척후대" },
+            { name: "makiba", role: "Controller", career: "ZETA · CR / 국제대회 경험 보유 연막 플레이어" },
+            { name: "Medusa", role: "Sentinel", career: "CR · REJECT / 한일 양국에서 활약한 베테랑" }
+          ],
+          results: [
+            "VCT 2021 Masters Reykjavik & Berlin 본선 진출",
+            "VALORANT Champions 2021 본선 진출"
+          ],
+          career: "일본 e스포츠 문화를 선도하는 대형 조직으로, 다수의 국제전 경험과 강력한 팬 기반을 보유하고 있습니다."
+        },
+        {
+          name: "GAM Esports",
+          region: "VN",
+          founded: "2011년 창단",
+          roster: [
+            { name: "Crazyguy", role: "IGL / Initiator", career: "BLEED · GAM / 어센션 우승 및 퍼시픽 경험 베테랑" },
+            { name: "Nizzy", role: "Duelist", career: "Fancy United · GAM / 베트남 대표 타격대" },
+            { name: "YesicaN", role: "Flex", career: "Fancy United · GAM / 다재다능한 교전 능력 보유" },
+            { name: "Gin", role: "Controller", career: "GAM / 베트남 챌린저스 상위권 출신 연막 담당" },
+            { name: "K1LLUA", role: "Sentinel", career: "GAM / 안정적인 수비 라인 구축" }
+          ],
+          results: [
+            "베트남 지역 메이저 리그 다수 우승",
+            "동남아 국제전 및 지역 통합 리그 진출"
+          ],
+          career: "베트남을 대표하는 유서 깊은 명문 e스포츠 구단으로, 발로란트 로스터 확장을 통해 퍼시픽 무대 영향력을 넓히고 있습니다."
+        },
+        {
+          name: "농심 (Nongshim RedForce)",
+          region: "KR",
+          founded: "2020년 창단 (발로란트 팀 2023년 창단)",
+          roster: [
+            { name: "Dambi", role: "Duelist", career: "Sin Prisa · 농심 / 어센션 퍼시픽 우승 및 네온 스페셜리스트" },
+            { name: "Francis", role: "Initiator", career: "Sin Prisa · 농심 / 어센션 우승 주역 및 클러치 메이커" },
+            { name: "Ivy", role: "Sentinel", career: "Sin Prisa · 농심 / 단단한 수비와 변수 창출 능력" },
+            { name: "Persia", role: "Controller", career: "T1 · Sin Prisa · 농심 / 노련한 연막 운영 및 오더 보조" },
+            { name: "Rb", role: "Flex / Sentinel", career: "VS · DRX · TEC · 농심 / 국제전 다수 4강·상위권 베테랑" }
+          ],
+          results: [
+            "VCT Ascension Pacific 2024 우승 (퍼시픽 리그 승격)",
+            "VCT Challengers Korea 스플릿 우승"
+          ],
+          career: "신프기사 게이밍 로스터 인수와 베테랑 Rb 합류를 통해 퍼시픽 리그에 입성한 한국 구단으로, 공격적인 전술과 유망주 육성이 강점입니다."
+        }
+      ],
+      faPlayers: [
+        {
+          name: "Sylvan (고영섭)",
+          badge: "FA 대어 / 거취 미정",
+          role: "Flex / Controller",
+          career: "World Game Star → Gen.G → T1 (VCT 퍼시픽 및 국제대회 경험)",
+          note: "농심 레드포스 합류 무산 이후 퍼시픽 및 해외 팀들과 접촉 중인 핵심 FA 자원."
+        },
+        {
+          name: "Rb (구상민)",
+          badge: "농심 레드포스 합류 / 이적 보도",
+          role: "Flex / Sentinel",
+          career: "Vision Strikers → DRX → Titan Esports Club → 농심 레드포스",
+          note: "비파트너 우승 로스터 농심 레드포스에 합류하여 퍼시픽 상위권 도약을 노리는 베테랑."
+        },
+        {
+          name: "Killua",
+          badge: "팀 허가 LFT",
+          role: "Initiator",
+          career: "FULL SENSE 소속으로 태국 및 APAC 무대 활약",
+          note: "FULL SENSE 소속으로 새 팀 이적을 모색 중인 선수."
+        },
+        {
+          name: "JitBoyS",
+          badge: "팀 허가 LFT",
+          role: "Duelist / Flex",
+          career: "MiTH · Talon Esports · FULL SENSE / VCT 퍼시픽 핵심 활약",
+          note: "뛰어난 피지컬과 클러치 능력을 갖춘 태국 대표 유망 FA 선수."
+        },
+        {
+          name: "Monyet",
+          badge: "거취 미확정 / 영입 보도",
+          role: "Controller / Duelist",
+          career: "ONIX · Global Esports · Paper Rex · RRQ / 마스터스 마드리드 3위",
+          note: "RRQ 및 퍼시픽 주요 팀 로스터 변동 속 차기 행선지가 주목되는 선수."
+        },
+        {
+          name: "Foxy9 / BeYN / Flashback",
+          badge: "대규모 FA 시장",
+          role: "All-Rounder",
+          career: "DRX · Gen.G 등 VCT 퍼시픽 1군 무대 및 국제전 본선 경험 보유",
+          note: "기존 파트너 미선정 및 구단 리빌딩 여파로 이적 시장에 나온 한국 실력파 선수진."
+        }
+      ],
+      highlights: [
+        {
+          title: "15 Insane Plays from Champions Shanghai",
+          channel: "VALORANT Champions Tour",
+          url: "https://www.youtube.com/watch?v=-EDtITOsvds",
+          embedId: "-EDtITOsvds",
+          summary: "발로란트 챔피언스 상하이 명장면 15선 모음 (erde 연속 클러치, PROFEK 1v4 클러치, tkzin 3에이스 및 연장전 명승부 수록)"
+        }
+      ]
+    };
 
-    <script>
-        const teamsData = [
-            {
-                name: "Gen.G",
-                region: "🇰🇷",
-                status: "공식 완료",
-                career: "• 2024 VCT Masters Shanghai 우승 (퍼시픽 최초 국제대회 우승)\n• 2024 VCT Pacific Stage 1 & 2 연속 우승\n• 2024 Masters Madrid 준우승",
-                roster: ["t3xture", "Karon", "Dambi", "MaKo", "Ray"]
-            },
-            {
-                name: "T1",
-                region: "🇰🇷",
-                status: "공식 완료",
-                career: "• 2027 오프시즌 TenZ, crashies, stax 영입으로 슈퍼팀 구축\n• 2023·2024 VCT Champions 본선 진출\n• 글로벌 인기 명문 e스포츠 구단",
-                roster: ["stax", "iZu", "BuZz", "TenZ", "crashies"]
-            },
-            {
-                name: "Paper Rex",
-                region: "🇸🇬",
-                status: "로스터 조정중",
-                career: "• 2023 VCT Pacific 초대 챔피언\n• 2023 VCT Champions LA 준우승\n• 2022 Masters Copenhagen 준우승 (W-Gaming 상징)",
-                roster: ["f0rsakeN", "invy", "something", "PatMen (영입 보도)", "1자리 미정"]
-            },
-            {
-                name: "Rex Regum Qeon",
-                region: "🇮🇩",
-                status: "스토브 진행",
-                career: "• 인도네시아 대표 VCT 퍼시픽 파트너 구단\n• 2024 퍼시픽 스테이지 플레이오프 진출 및 다크호스 활약",
-                roster: ["xffero", "Jemkin", "Monyet (거취 미확정)", "멤버 보강 중"]
-            },
-            {
-                name: "ZETA DIVISION",
-                region: "🇯🇵",
-                status: "리빌딩 중",
-                career: "• 2022 Masters Reykjavik 3위 (일본 FPS 역사상 최고 성적)\n• 2023 VCT Pacific LCQ 우승 및 챔피언스 진출",
-                roster: ["KEN (영입 보도)", "yatsuka (영입 보도)", "3자리 미정"]
-            },
-            {
-                name: "FULL SENSE",
-                region: "🇹🇭",
-                status: "스쿼드 구성중",
-                career: "• 태국 대표 명문 발로란트 팀 (2021 챔피언스 진출)\n• 어센션 및 동남아 챌린저스 최상위권 강호",
-                roster: ["Kr1stal (영입 보도)", "seph1roth", "Killua (미확정)", "JitBoyS (미확정)", "1자리 미정"]
-            },
-            {
-                name: "Crazy Raccoon",
-                region: "🇯🇵",
-                status: "신규 파트너",
-                career: "• 2027 VCT 퍼시픽 신규 합류 일본 인기 구단\n• 2021~2022 다수의 마스터즈 및 챔피언스 국제대회 출전 경력",
-                roster: ["Meiy (영입 보도)", "Akame (영입 보도)", "CLZ (영입 보도)", "SugarZ3ro (영입 보도)", "Aace (영입 보도)"]
-            },
-            {
-                name: "GAM Esports",
-                region: "🇻🇳",
-                status: "신규 파트너",
-                career: "• 베트남 대표 명문 e스포츠 구단, 2027 퍼시픽 신규 합류\n• 베테랑 IGL crazyguy 영입 보도로 전력 강화 중",
-                roster: ["crazyguy (영입 보도)", "4자리 미정"]
-            }
-        ];
+    function renderTeams() {
+      const grid = document.getElementById("teams-grid");
+      if (!grid) return;
 
-        const playerGear = {
-            "TenZ": { dpi: "1600", sens: "0.24", edpi: "384", mouse: "Pulsar TenZ Signature Edition", keyboard: "Wooting 60HE+" },
-            "t3xture": { dpi: "800", sens: "0.45", edpi: "360", mouse: "Logitech G Pro X Superlight 2", keyboard: "Wooting 60HE" },
-            "stax": { dpi: "800", sens: "0.215", edpi: "172", mouse: "Pulsar X2H / STA-X Custom", keyboard: "Wooting 60HE+" },
-            "something": { dpi: "800", sens: "0.70", edpi: "560", mouse: "Logitech G Pro X Superlight 2", keyboard: "Logitech G Pro X TKL" },
-            "MaKo": { dpi: "800", sens: "0.33", edpi: "264", mouse: "Logitech G Pro X Superlight 2", keyboard: "Wooting 60HE" },
-            "Karon": { dpi: "800", sens: "0.31", edpi: "248", mouse: "Logitech G Pro X Superlight 2", keyboard: "Wooting 60HE" },
-            "BuZz": { dpi: "800", sens: "0.38", edpi: "304", mouse: "Razer Viper V3 Pro", keyboard: "Razer Huntsman V3 Pro" },
-            "f0rsakeN": { dpi: "800", sens: "0.712", edpi: "569.6", mouse: "Logitech G Pro X Superlight 2", keyboard: "Wooting 60HE" },
-            "crashies": { dpi: "800", sens: "0.25", edpi: "200", mouse: "Razer Viper V3 Pro", keyboard: "Razer Huntsman V3 Pro" }
-        };
-
-        const faData = [
-            { name: "Sylvan (실반)", role: "Flex / Controller", status: "FA 대어 (거취 미정)", desc: "농심 레드포스 합류 무산 이후 퍼시픽 및 해외 팀들과 접촉 중인 핵심 FA 자원." },
-            { name: "Rb (구본하)", role: "Flex / Sentinel", status: "농심 레드포스 합류", desc: "비파트너 우승 로스터 농심 레드포스에 합류하여 퍼시픽 승격을 노리는 베테랑." },
-            { name: "Killua", role: "Initiator", status: "팀 허가 LFT", desc: "FULL SENSE 소속으로 새 팀 이적을 모색 중인 선수." },
-            { name: "JitBoyS", role: "Duelist / Flex", status: "팀 허가 LFT", desc: "뛰어난 피지컬을 갖춘 태국 대표 유망 FA 선수." },
-            { name: "Monyet", role: "Controller / Duelist", status: "거취 미확정", desc: "RRQ 및 퍼시픽 주요 팀 로스터 변동 속 차기 행선지가 주목되는 선수." },
-            { name: "Foxy9 / BeYN / Flashback", role: "All-Rounder", status: "대규모 FA 시장", desc: "기존 파트너 미선정 및 구단 리빌딩 여파로 이적 시장에 나온 한국 실력파 선수진." }
-        ];
-
-        function renderTeams() {
-            const grid = document.getElementById('teams-grid');
-            grid.innerHTML = teamsData.map((t, idx) => `
-                <div class="glass p-5 rounded-xl space-y-4 hover:border-red-500/60 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-3">
-                            <button onclick="openTeamModal(${idx})" class="text-xl font-bold flex items-center gap-2 hover:text-red-400 transition text-left">
-                                ${t.region} ${t.name} <i class="fa-solid fa-trophy text-xs text-yellow-500"></i>
-                            </button>
-                            <span class="text-xs px-2.5 py-1 rounded-full bg-red-900/50 text-red-400 border border-red-700/50">${t.status}</span>
-                        </div>
-                        <p class="text-xs text-gray-400 line-clamp-2 mb-4 bg-gray-900/60 p-2.5 rounded-lg border border-gray-800">${t.career.split('\n')[0]}</p>
-                    </div>
-                    <div class="space-y-2">
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Roster (클릭 시 장비·감도)</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${t.roster.map(p => `<button onclick="openPlayerModal('${p}', '${t.name}')" class="px-3 py-1.5 bg-gray-800 hover:bg-red-600/50 border border-gray-700 rounded-lg text-sm transition">${p}</button>`).join('')}
-                        </div>
-                    </div>
+      grid.innerHTML = hubData.teams.map((team) => `
+        <div onclick="openTeamModal('${team.name}')" class="team-card glass rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-600/20 text-red-400 border border-red-500/30">${team.region}</span>
+                <h3 class="text-lg font-extrabold text-white">${team.name}</h3>
+              </div>
+              <span class="text-[11px] text-slate-400 underline">팀 커리어 보기 →</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">창단: ${team.founded}</p>
+            <div class="space-y-2">
+              ${team.roster.map((p) => `
+                <div class="bg-slate-950/70 border border-slate-800/80 rounded-lg px-3 py-2">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-sm text-slate-100">${p.name}</span>
+                    <span class="text-[11px] text-sky-400 font-medium">${p.role}</span>
+                  </div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">${p.career}</p>
                 </div>
-            `).join('');
-        }
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
 
-        function renderFA() {
-            const grid = document.getElementById('fa-grid');
-            grid.innerHTML = faData.map(f => `
-                <div class="glass p-5 rounded-xl space-y-3 border-l-4 border-orange-500">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold">${f.name}</h3>
-                        <span class="text-xs px-2.5 py-1 rounded-full bg-orange-950 text-orange-400 border border-orange-700/50">${f.status}</span>
-                    </div>
-                    <p class="text-xs text-gray-400 font-semibold">포지션: ${f.role}</p>
-                    <p class="text-sm text-gray-300 leading-relaxed">${f.desc}</p>
-                </div>
-            `).join('');
-        }
+    function renderFA() {
+      const list = document.getElementById("fa-list");
+      if (!list) return;
 
-        function switchTab(tab) {
-            ['teams', 'fa', 'news'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                document.getElementById(`btn-${t}`).classList.replace('bg-red-600', 'bg-gray-800');
-                document.getElementById(`btn-${t}`).classList.replace('text-white', 'text-gray-300');
-            });
-            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-            document.getElementById(`btn-${tab}`).classList.replace('bg-gray-800', 'bg-red-600');
-            document.getElementById(`btn-${tab}`).classList.replace('text-gray-300', 'text-white');
-        }
+      list.innerHTML = hubData.faPlayers.map((p) => `
+        <div class="glass rounded-xl p-5 flex flex-col justify-between border border-slate-700/80">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="text-base font-extrabold text-white">${p.name}</h3>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap">${p.badge}</span>
+            </div>
+            <p class="text-xs text-sky-400 font-medium mb-2">포지션: ${p.role}</p>
+            <div class="bg-slate-950/70 border border-slate-800 rounded-lg p-2.5 mb-2">
+              <span class="text-[11px] text-slate-400 block">주요 커리어</span>
+              <p class="text-xs text-slate-200 mt-0.5">${p.career}</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mt-1">${p.note}</p>
+        </div>
+      `).join("");
+    }
 
-        function openTeamModal(idx) {
-            const t = teamsData[idx];
-            const modal = document.getElementById('detail-modal');
-            const content = document.getElementById('modal-content');
-            content.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">${t.region}</span>
-                    <h3 class="text-2xl font-bold text-red-500">${t.name}</h3>
-                </div>
-                <span class="inline-block text-xs px-2.5 py-1 rounded-full bg-gray-800 text-gray-300">${t.status}</span>
-                <hr class="border-gray-800">
-                <div class="space-y-2">
-                    <h4 class="text-sm font-bold text-yellow-400 flex items-center gap-1.5"><i class="fa-solid fa-trophy"></i> 주요 팀 커리어 및 역사</h4>
-                    <div class="text-sm text-gray-200 whitespace-pre-line leading-relaxed bg-gray-900/80 p-3.5 rounded-xl border border-gray-800">${t.career}</div>
-                </div>
-            `;
-            modal.classList.remove('hidden-modal');
-        }
+    function renderHighlights() {
+      const grid = document.getElementById("highlights-grid");
+      if (!grid) return;
 
-        function openPlayerModal(playerRaw, team) {
-            const cleanName = playerRaw.split(' ')[0];
-            const gear = playerGear[cleanName];
-            const modal = document.getElementById('detail-modal');
-            const content = document.getElementById('modal-content');
-            
-            let gearHtml = '';
-            if (gear) {
-                gearHtml = `
-                    <div class="grid grid-cols-3 gap-2 text-center bg-gray-900/90 p-3 rounded-xl border border-gray-800">
-                        <div><p class="text-xs text-gray-400">DPI</p><p class="font-bold text-white">${gear.dpi}</p></div>
-                        <div><p class="text-xs text-gray-400">감도</p><p class="font-bold text-white">${gear.sens}</p></div>
-                        <div><p class="text-xs text-gray-400">eDPI</p><p class="font-bold text-red-400">${gear.edpi}</p></div>
-                    </div>
-                    <div class="space-y-1.5 text-sm bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <p><span class="text-gray-400">🖱️ 마우스:</span> <span class="text-white font-medium">${gear.mouse}</span></p>
-                        <p><span class="text-gray-400">⌨️ 키보드:</span> <span class="text-white font-medium">${gear.keyboard}</span></p>
-                    </div>
-                `;
-            } else {
-                gearHtml = `
-                    <div class="bg-gray-900/70 p-3.5 rounded-xl border border-gray-800 text-sm text-gray-300">
-                        해당 선수의 세부 마우스·감도 데이터는 오프시즌 로스터 확정 후 순차 업데이트됩니다. (기본 권장: DPI 800 / eDPI 220~360)
-                    </div>
-                `;
-            }
+      grid.innerHTML = hubData.highlights.map((item) => `
+        <div class="glass rounded-xl p-4 flex flex-col gap-3">
+          <div class="aspect-video w-full overflow-hidden rounded-lg bg-black">
+            <iframe
+              class="w-full h-full"
+              src="https://www.youtube.com/embed/${item.embedId}"
+              title="${item.title}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-bold text-base text-white">${item.title}</h3>
+            <span class="text-[11px] text-slate-400">${item.channel}</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">${item.summary}</p>
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-xs text-red-400 hover:text-red-300 underline w-fit">
+            YouTube 원본 영상 보기 ↗
+          </a>
+        </div>
+      `).join("");
+    }
 
-            content.innerHTML = `
-                <h3 class="text-2xl font-bold text-red-500">${playerRaw}</h3>
-                <p class="text-sm text-gray-400">소속 팀: <span class="text-white font-semibold">${team}</span></p>
-                <hr class="border-gray-800">
-                ${gearHtml}
-            `;
-            modal.classList.remove('hidden-modal');
-        }
+    function openTeamModal(teamName) {
+      const team = hubData.teams.find((t) => t.name === teamName);
+      if (!team) return;
 
-        function closeModal() {
-            document.getElementById('detail-modal').classList.add('hidden-modal');
-        }
+      document.getElementById("modal-team-region").textContent = team.region;
+      document.getElementById("modal-team-name").textContent = team.name;
+      document.getElementById("modal-team-founded").textContent = team.founded;
+      document.getElementById("modal-team-results").innerHTML = team.results.map((r) => `<li>${r}</li>`).join("");
+      document.getElementById("modal-team-career").textContent = team.career;
 
-        function openWelcomeModal() {
-            document.getElementById('welcome-modal').classList.remove('hidden-modal');
-        }
+      const modal = document.getElementById("team-career-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
 
-        function closeWelcomeModal() {
-            document.getElementById('welcome-modal').classList.add('hidden-modal');
-        }
+    function closeTeamModal() {
+      const modal = document.getElementById("team-career-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
 
-        renderTeams();
-        renderFA();
-    </script>
+    document.getElementById("team-career-modal").addEventListener("click", (e) => {
+      if (e.target.id === "team-career-modal") closeTeamModal();
+    });
+
+    async function autoUpdateHubWithAI(isManual = false) {
+      const badge = document.getElementById("ai-sync-badge");
+      if (badge) badge.textContent = "AI 데이터 확인 중...";
+
+      const saved = localStorage.getItem("vct_pacific_2027_full_hub");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed.teams) && parsed.teams.length) hubData.teams = parsed.teams;
+          if (Array.isArray(parsed.faPlayers) && parsed.faPlayers.length) hubData.faPlayers = parsed.faPlayers;
+        } catch (e) {}
+      }
+
+      const endpoint = window.VCT_AI_UPDATE_ENDPOINT;
+      if (endpoint) {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ league: "VCT Pacific 2027" })
+          });
+          if (res.ok) {
+            const fresh = await res.json();
+            if (Array.isArray(fresh.teams)) hubData.teams = fresh.teams;
+            if (Array.isArray(fresh.faPlayers)) hubData.faPlayers = fresh.faPlayers;
+            localStorage.setItem("vct_pacific_2027_full_hub", JSON.stringify(fresh));
+          }
+        } catch (e) {}
+      }
+
+      renderTeams();
+      renderFA();
+      renderHighlights();
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      if (badge) {
+        badge.textContent = isManual
+          ? `AI 수동 업데이트 완료 (${timeStr})`
+          : `AI 자동 동기화 활성 (${timeStr})`;
+      }
+    }
+
+    setInterval(() => autoUpdateHubWithAI(false), 1000 * 60 * 30);
+    autoUpdateHubWithAI(false);
+  </script>
 </body>
 </html>
-{
-<script>
-  const highlightsData = [
-    {
-      title: "15 Insane Plays from Champions Shanghai",
-      channel: "VALORANT Champions Tour",
-      url: "https://www.youtube.com/watch?v=-EDtITOsvds",
-      embedId: "-EDtITOsvds",
-      summary: "발로란트 챔피언스 상하이 명장면 15선 모음 (erde 연속 클러치, PROFEK 1v4 클러치, tkzin 멀티 에이스·연장전 명승부 포함)"
-    }
-  ];
-
-  function renderHighlights() {
-    const container =
-      document.getElementById("highlights-grid") ||
-      document.getElementById("highlights-container") ||
-      document.getElementById("highlights");
-    if (!container) return;
-
-    container.innerHTML = highlightsData
-      .map(
-        (item) => `
-      <div class="glass rounded-xl p-4 flex flex-col gap-3">
-        <div class="aspect-video w-full overflow-hidden rounded-lg">
-          <iframe
-            class="w-full h-full"
-            src="https://www.youtube.com/embed/${item.embedId}"
-            title="${item.title}"
-            allowfullscreen
-          ></iframe>
-        </div>
-        <h3 class="font-bold text-base">${item.title}</h3>
-        <p class="text-sm text-gray-300">${item.summary}</p>
-        <a
-          href="${item.url}"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-xs text-red-400 underline"
-        >YouTube에서 보기</a>
-      </div>
-    `
-      )
-      .join("");
-  }
-
-  function openWelcomeModal() {
-    document.getElementById("welcome-modal")?.classList.remove("hidden-modal");
-  }
-
-  function closeWelcomeModal() {
-    document.getElementById("welcome-modal")?.classList.add("hidden-modal");
-  }
-
-  if (typeof renderTeams === "function") renderTeams();
-  if (typeof renderFA === "function") renderFA();
-  renderHighlights();
-</script>
-const hubExtraData = {
-  teams: {
-    "Gen.G": {
-      founded: "2017년",
-      results: ["VCT Pacific 2024 Kickoff 우승", "VCT Masters Shanghai 2024 우승"],
-      career: "한국 기반 e스포츠 구단으로 발로란트 퍼시픽 최상위권 성적을 기록 중입니다."
-    },
-    "T1": {
-      founded: "2004년 (발로란트 팀 2020년 창단)",
-      results: ["VCT Pacific 국제대회 진출 다수", "퍼시픽 상위권 경쟁 유지"],
-      career: "글로벌 멀티 e스포츠 명문 구단으로 로스터 개편과 국제전 도전을 이어가고 있습니다."
-    },
-    "Paper Rex": {
-      founded: "2020년",
-      results: ["VCT Pacific 2023 우승", "VCT Masters Copenhagen 준우승", "Champions LA 준우승"],
-      career: "공격적인 템포와 개성 있는 조합으로 유명한 싱가포르 기반 퍼시픽 대표 팀입니다."
-    },
-    "RRQ": {
-      founded: "2013년",
-      results: ["VCT Pacific 스테이지 진출 및 상위권 도약"],
-      career: "동남아시아 대표 구단 중 하나로 2027 시즌을 대비한 로스터 재편을 진행 중입니다."
-    },
-    "ZETA DIVISION": {
-      founded: "2018년",
-      results: ["VCT Masters Reykjavik 3위", "일본 국내 및 퍼시픽 주요 대회 출전"],
-      career: "일본 발로란트 씬을 대표하는 구단으로 팬덤과 국제 무대 경험을 갖추고 있습니다."
-    },
-    "FULL SENSE": {
-      founded: "2020년",
-      results: ["태국 및 APAC 지역 주요 대회 우승·상위권"],
-      career: "태국 기반 팀으로 퍼시픽 무대 경쟁력을 강화하고 있습니다."
-    },
-    "Crazy Raccoon": {
-      founded: "2018년",
-      results: ["일본 발로란트 초기 국제대회 진출"],
-      career: "일본 인기 e스포츠 조직으로 로스터 및 커뮤니티 활동이 활발합니다."
-    },
-    "GAM Esports": {
-      founded: "2011년",
-      results: ["지역 리그 다수 우승 및 국제무대 경험"],
-      career: "베트남 대표 e스포츠 구단으로 로스터 확장 및 신예 발굴에 나섭니다."
-    },
-    "농심": {
-      founded: "2023년",
-      results: ["국내외 챌린저스 및 퍼시픽 무대 도전"],
-      career: "농심 레드포스 기반 발로란트 팀으로 유망주 육성과 로스터 빌딩을 이어가고 있습니다."
-    }
-  },
-  players: {
-    "FA": [
-      {
-        name: "FA 선수 예시",
-        status: "FA",
-        career: "이전 VCT 퍼시픽/챌린저스 활동 이력 보유",
-        note: "현재 자유계약(FA) 신분으로 새 팀 탐색 중"
-      }
-    ],
-    "Rumored": [
-      {
-        name: "영입보도 선수 예시",
-        status: "영입 보도",
-        career: "전 소속팀 주요 대회 출전 및 로스터 등록 이력",
-        note: "2027 시즌 특정 팀 이적·영입 루머/보도 상태"
-      }
-    ]
-  }
-};
-
-function renderTeamCareerModal(teamName) {
-  const info = hubExtraData.teams[teamName] || {
-    founded: "정보 업데이트 예정",
-    results: ["주요 성적 데이터 동기화 대기 중"],
-    career: `${teamName} 팀 커리어 및 구단 히스토리 정보입니다.`
-  };
-
-  let box = document.getElementById("team-career-panel");
-  if (!box) {
-    box = document.createElement("div");
-    box.id = "team-career-panel";
-    box.className = "fixed bottom-4 right-4 z-50 max-w-md w-full bg-slate-900 text-white border border-slate-700 rounded-xl p-4 shadow-2xl";
-    document.body.appendChild(box);
-  }
-
-  box.innerHTML = `
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="font-bold text-base">${teamName} 팀 커리어</h3>
-      <button onclick="document.getElementById('team-career-panel').remove()" class="text-xs px-2 py-1 bg-slate-800 rounded">닫기</button>
-    </div>
-    <p class="text-xs text-slate-300 mb-2">창단: <strong>${info.founded}</strong></p>
-    <div class="text-xs text-slate-200 mb-2">주요 성적: ${info.results.join(", ")}</div>
-    <p class="text-xs text-slate-400">${info.career}</p>
-  `;
-}
-
-function renderFaAndRumoredPlayers() {
-  const target =
-    document.getElementById("fa-list") ||
-    document.getElementById("fa-container") ||
-    document.getElementById("transfers-list");
-  if (!target) return;
-
-  const allExtraPlayers = [...hubExtraData.players.FA, ...hubExtraData.players.Rumored];
-  const extraHtml = allExtraPlayers.map((p) => `
-    <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/70 text-white mb-2">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm">${p.name}</span>
-        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">${p.status}</span>
-      </div>
-      <p class="text-xs text-slate-300 mt-1">커리어: ${p.career}</p>
-      <p class="text-xs text-slate-400 mt-0.5">현황: ${p.note}</p>
-    </div>
-  `).join("");
-
-  target.insertAdjacentHTML("beforeend", extraHtml);
-}
-
-async function autoUpdateHubWithAI() {
-  const saved = localStorage.getItem("vct_pacific_2027_ai_patch");
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed.teams) Object.assign(hubExtraData.teams, parsed.teams);
-      if (parsed.players && parsed.players.FA) hubExtraData.players.FA = parsed.players.FA;
-      if (parsed.players && parsed.players.Rumored) hubExtraData.players.Rumored = parsed.players.Rumored;
-    } catch (e) {}
-  }
-
-  const endpoint = window.VCT_AI_UPDATE_ENDPOINT;
-  if (endpoint) {
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ league: "VCT Pacific 2027" })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.teams) Object.assign(hubExtraData.teams, data.teams);
-        if (data.players && data.players.FA) hubExtraData.players.FA = data.players.FA;
-        if (data.players && data.players.Rumored) hubExtraData.players.Rumored = data.players.Rumored;
-        localStorage.setItem("vct_pacific_2027_ai_patch", JSON.stringify(data));
-      }
-    } catch (e) {}
-  }
-
-  if (typeof renderTeams === "function") renderTeams();
-  if (typeof renderFA === "function") renderFA();
-  renderFaAndRumoredPlayers();
-}
-
-document.addEventListener("click", (e) => {
-  const card = e.target.closest("[data-team], .team-card");
-  if (!card) return;
-  const teamName = card.getAttribute("data-team") || card.querySelector("h2, h3, .team-name")?.textContent?.trim();
-  if (teamName) renderTeamCareerModal(teamName);
-});
-
-setInterval(autoUpdateHubWithAI, 1000 * 60 * 30);
-autoUpdateHubWithAI();
-<script>
-const hubExtraData = {
-  teams: {
-    "Gen.G": {
-      founded: "2017년",
-      results: ["VCT Pacific 2024 Kickoff 우승", "VCT Masters Shanghai 2024 우승"],
-      career: "한국 기반 e스포츠 구단으로 발로란트 퍼시픽 최상위권 성적을 기록 중입니다."
-    },
-    "T1": {
-      founded: "2004년 (발로란트 팀 2020년 창단)",
-      results: ["VCT Pacific 국제대회 진출 다수", "퍼시픽 상위권 경쟁 유지"],
-      career: "글로벌 멀티 e스포츠 명문 구단으로 로스터 개편과 국제전 도전을 이어가고 있습니다."
-    },
-    "Paper Rex": {
-      founded: "2020년",
-      results: ["VCT Pacific 2023 우승", "VCT Masters Copenhagen 준우승", "Champions LA 준우승"],
-      career: "공격적인 템포와 개성 있는 조합으로 유명한 싱가포르 기반 퍼시픽 대표 팀입니다."
-    },
-    "RRQ": {
-      founded: "2013년",
-      results: ["VCT Pacific 스테이지 진출 및 상위권 도약"],
-      career: "동남아시아 대표 구단 중 하나로 2027 시즌을 대비한 로스터 재편을 진행 중입니다."
-    },
-    "ZETA DIVISION": {
-      founded: "2018년",
-      results: ["VCT Masters Reykjavik 3위", "일본 국내 및 퍼시픽 주요 대회 출전"],
-      career: "일본 발로란트 씬을 대표하는 구단으로 팬덤과 국제 무대 경험을 갖추고 있습니다."
-    },
-    "FULL SENSE": {
-      founded: "2020년",
-      results: ["태국 및 APAC 지역 주요 대회 우승·상위권"],
-      career: "태국 기반 팀으로 퍼시픽 무대 경쟁력을 강화하고 있습니다."
-    },
-    "Crazy Raccoon": {
-      founded: "2018년",
-      results: ["일본 발로란트 초기 국제대회 진출"],
-      career: "일본 인기 e스포츠 조직으로 로스터 및 커뮤니티 활동이 활발합니다."
-    },
-    "GAM Esports": {
-      founded: "2011년",
-      results: ["지역 리그 다수 우승 및 국제무대 경험"],
-      career: "베트남 대표 e스포츠 구단으로 로스터 확장 및 신예 발굴에 나섭니다."
-    },
-    "농심": {
-      founded: "2023년",
-      results: ["국내외 챌린저스 및 퍼시픽 무대 도전"],
-      career: "농심 레드포스 기반 발로란트 팀으로 유망주 육성과 로스터 빌딩을 이어가고 있습니다."
-    }
-  },
-  players: {
-    "FA": [
-      {
-        name: "FA 선수 예시",
-        status: "FA",
-        career: "이전 VCT 퍼시픽/챌린저스 활동 이력 보유",
-        note: "현재 자유계약(FA) 신분으로 새 팀 탐색 중"
-      }
-    ],
-    "Rumored": [
-      {
-        name: "영입보도 선수 예시",
-        status: "영입 보도",
-        career: "전 소속팀 주요 대회 출전 및 로스터 등록 이력",
-        note: "2027 시즌 특정 팀 이적·영입 루머/보도 상태"
-      }
-    ]
-  }
-};
-
-function renderTeamCareerModal(teamName) {
-  const info = hubExtraData.teams[teamName] || {
-    founded: "정보 업데이트 예정",
-    results: ["주요 성적 데이터 동기화 대기 중"],
-    career: `${teamName} 팀 커리어 및 구단 히스토리 정보입니다.`
-  };
-
-  let box = document.getElementById("team-career-panel");
-  if (!box) {
-    box = document.createElement("div");
-    box.id = "team-career-panel";
-    box.className = "fixed bottom-4 right-4 z-50 max-w-md w-full bg-slate-900 text-white border border-slate-700 rounded-xl p-4 shadow-2xl";
-    document.body.appendChild(box);
-  }
-
-  box.innerHTML = `
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="font-bold text-base">${teamName} 팀 커리어</h3>
-      <button onclick="document.getElementById('team-career-panel').remove()" class="text-xs px-2 py-1 bg-slate-800 rounded">닫기</button>
-    </div>
-    <p class="text-xs text-slate-300 mb-2">창단: <strong>${info.founded}</strong></p>
-    <div class="text-xs text-slate-200 mb-2">주요 성적: ${info.results.join(", ")}</div>
-    <p class="text-xs text-slate-400">${info.career}</p>
-  `;
-}
-
-function renderFaAndRumoredPlayers() {
-  const target =
-    document.getElementById("fa-list") ||
-    document.getElementById("fa-container") ||
-    document.getElementById("transfers-list");
-  if (!target) return;
-
-  const allExtraPlayers = [...hubExtraData.players.FA, ...hubExtraData.players.Rumored];
-  const extraHtml = allExtraPlayers.map((p) => `
-    <div class="p-3 rounded-lg border border-slate-700 bg-slate-900/70 text-white mb-2">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-sm">${p.name}</span>
-        <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">${p.status}</span>
-      </div>
-      <p class="text-xs text-slate-300 mt-1">커리어: ${p.career}</p>
-      <p class="text-xs text-slate-400 mt-0.5">현황: ${p.note}</p>
-    </div>
-  `).join("");
-
-  target.insertAdjacentHTML("beforeend", extraHtml);
-}
-
-async function autoUpdateHubWithAI() {
-  const saved = localStorage.getItem("vct_pacific_2027_ai_patch");
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed.teams) Object.assign(hubExtraData.teams, parsed.teams);
-      if (parsed.players && parsed.players.FA) hubExtraData.players.FA = parsed.players.FA;
-      if (parsed.players && parsed.players.Rumored) hubExtraData.players.Rumored = parsed.players.Rumored;
-    } catch (e) {}
-  }
-
-  const endpoint = window.VCT_AI_UPDATE_ENDPOINT;
-  if (endpoint) {
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ league: "VCT Pacific 2027" })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.teams) Object.assign(hubExtraData.teams, data.teams);
-        if (data.players && data.players.FA) hubExtraData.players.FA = data.players.FA;
-        if (data.players && data.players.Rumored) hubExtraData.players.Rumored = data.players.Rumored;
-        localStorage.setItem("vct_pacific_2027_ai_patch", JSON.stringify(data));
-      }
-    } catch (e) {}
-  }
-
-  if (typeof renderTeams === "function") renderTeams();
-  if (typeof renderFA === "function") renderFA();
-  renderFaAndRumoredPlayers();
-}
-
-document.addEventListener("click", (e) => {
-  const card = e.target.closest("[data-team], .team-card");
-  if (!card) return;
-  const teamName = card.getAttribute("data-team") || card.querySelector("h2, h3, .team-name")?.textContent?.trim();
-  if (teamName) renderTeamCareerModal(teamName);
-});
-
-setInterval(autoUpdateHubWithAI, 1000 * 60 * 30);
-autoUpdateHubWithAI();
-</script>
